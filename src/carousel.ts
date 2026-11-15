@@ -34,7 +34,7 @@ export function renderAppCarousel(parent: HTMLElement): () => void {
     list.append(item)
   }
   viewport.append(list)
-  section.append(title, element('p', t('complete.exploreHint')), viewport)
+  section.append(title, viewport)
 
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
   let pausedByUser = false

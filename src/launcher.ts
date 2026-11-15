@@ -141,12 +141,11 @@ export async function launch(root: HTMLElement, oauth: SignupOAuth, callback = f
       root.append(element('p', t('errors.redirect')))
       return
     }
-    const fallback = element('p', `${t('complete.redirectFallback')} `, 'redirect-fallback')
-    const link = element('a', t('complete.redirectHere'))
-    link.setAttribute('aria-label', t('complete.redirectLink', { appName: app.appName }))
+    const fallback = element('p', '', 'redirect-fallback')
+    const link = element('a', t('complete.redirectLink', { appName: app.appName }))
     link.href = destination
     link.onclick = stopCountdown
-    fallback.append(link, document.createTextNode('.'))
+    fallback.append(link)
 
     let remaining = REDIRECT_SECONDS
     const status = element('p', t('complete.countdown', { appName: app.appName, count: remaining }))

@@ -1359,12 +1359,6 @@ main.demo-main {
   background: #111b3866;
   backdrop-filter: blur(3px);
 }
-.demo-dialog-note {
-  padding-right: 44px;
-  margin-bottom: 32px !important;
-  color: var(--subtle);
-  font-size: 13px;
-}
 .demo-page .demo-dialog .launcher-close {
   position: absolute;
   top: 16px;
@@ -1423,11 +1417,6 @@ main.demo-main {
   background: var(--accent);
   color: var(--accent-ink);
 }
-.demo-dialog[data-presentation='fullscreen'] .demo-dialog-note {
-  position: absolute;
-  top: 32px;
-  left: calc(42% + 48px);
-}
 .demo-dialog[data-presentation='fullscreen'] [data-launcher] {
   grid-column: 2;
   grid-row: 1;
@@ -1440,9 +1429,6 @@ main.demo-main {
   grid-template-columns: minmax(0, 1fr);
   .demo-fullscreen-aside {
     display: none;
-  }
-  .demo-dialog-note {
-    left: 48px;
   }
   [data-launcher] {
     grid-column: 1;
@@ -1613,9 +1599,6 @@ main.demo-main {
   }
   .demo-fullscreen-aside {
     display: none;
-  }
-  .demo-dialog[data-presentation='fullscreen'] .demo-dialog-note {
-    position: static;
   }
   .demo-dialog[data-presentation='fullscreen'] [data-launcher] {
     width: 100%;
