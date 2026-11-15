@@ -448,8 +448,6 @@ export function mountDemo(root: HTMLElement) {
     modal.dialog.classList.add('demo-surface', 'demo-dialog')
     modal.dialog.dataset.appearance = appearance
     modal.dialog.lang = language
-    const note = element('p', t(`demo.${language}.note`), 'demo-dialog-note')
-    modal.dialog.prepend(note)
     if (presentation === 'fullscreen') {
       const aside = element('div', '', 'demo-fullscreen-aside')
       aside.setAttribute('aria-hidden', 'true')
