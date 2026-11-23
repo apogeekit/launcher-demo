@@ -329,13 +329,7 @@ export function mountDemo(root: HTMLElement) {
   const previewHeader = element('div', '', 'demo-preview-header')
   const appBrand = element('span', '', 'demo-app-brand')
   appBrand.append(mark(), element('span', t('demo.yourApp')))
-  const previewAction = action(
-    'demo.login',
-    () => openDialog(layout === 'fullscreen' ? 'fullscreen' : 'dialog'),
-    'demo-button demo-primary',
-  )
-  previewAction.setAttribute('aria-haspopup', 'dialog')
-  previewHeader.append(appBrand, previewAction)
+  previewHeader.append(appBrand)
   const previewBody = element('div', '', 'demo-preview-body')
   const stateBar = element('div', '', 'demo-state-bar')
   const state = element('span', '', 'demo-flow-state')
@@ -401,6 +395,7 @@ export function mountDemo(root: HTMLElement) {
   function messages(locale = language) {
     const catalog = translate(locale === 'es' ? spanish : undefined)
     return (key: string, values?: Record<string, string | number>) => {
+      if (key === 'signin.intro') return t(`demo.${locale}.signinIntro`)
       if (key === 'signin.hint') return t(`demo.${locale}.handleHint`)
       if (key === 'oauth.opening') return t(`demo.${locale}.opening`)
       if (key === 'complete.title') return t(`demo.${locale}.complete`)
@@ -522,8 +517,9 @@ export function mountDemo(root: HTMLElement) {
   function welcome() {
     const home = element('div', '', 'demo-app-home')
     const network = networkArtwork()
+    const label = layout === 'fullscreen' ? 'openFullscreen' : 'tryLogin'
     const start = action(
-      layout === 'fullscreen' ? 'demo.openFullscreen' : 'demo.tryLogin',
+      `demo.${language}.${label}`,
       () => openDialog(layout === 'fullscreen' ? 'fullscreen' : 'dialog'),
       'demo-button demo-primary',
     )
@@ -540,10 +536,8 @@ export function mountDemo(root: HTMLElement) {
     previewBody.replaceChildren()
     previewBody.lang = language
     preview.dataset.layout = layout
-    previewAction.hidden = layout === 'inline' || layout === 'picker'
     modeField.hidden = layout === 'picker'
     responseField.hidden = layout === 'picker'
-    previewAction.textContent = t(layout === 'fullscreen' ? 'demo.openFullscreen' : 'demo.login')
     state.textContent = t('demo.state.ready')
     if (layout === 'inline') {
       const container = element('div', '', 'demo-inline')

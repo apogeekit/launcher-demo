@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import { mountDemo } from './demo'
 import { providers } from './providers'
+import messages from '../locales/en.json'
 
 let root: HTMLElement
 let unmount: () => void
@@ -201,6 +202,13 @@ test('sign-in-only and signup-only modes are independent of presentation', () =>
 })
 
 test('Spanish catalogs apply to the component subtree and can be switched back without retaining a flow', () => {
+  const opener = () => root.querySelector('.demo-app-home button')!.textContent
+  expect(opener()).toBe(messages.demo['en.tryLogin'])
+  choose('language', 'es')
+  expect(opener()).toBe(messages.demo['es.tryLogin'])
+  choose('language', 'en')
+  expect(opener()).toBe(messages.demo['en.tryLogin'])
+
   layout('inline')
   const englishLabel = root.querySelector('[data-launcher] label')!.textContent
   choose('language', 'es')
