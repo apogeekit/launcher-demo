@@ -10,7 +10,7 @@
 
 ---
 
-launcher.at is a static site (Vite + TypeScript, no framework). The homepage is a component playground with simulated sign-ins. Try account flows, three appearances, English/Spanish, provider allowlists, custom hosts, error recovery, and the standalone host picker. The implementation panel shows matching TypeScript, including redirect or popup OAuth adapters.
+launcher.at is a static site (Vite + TypeScript, no framework). The homepage is a component playground with simulated sign-ins and live handle suggestions from Bluesky’s public AppView. Try account flows, three appearances, English/Spanish, provider allowlists, custom hosts, error recovery, and the standalone host picker. The implementation panel shows matching TypeScript, including the AppView option and redirect or popup OAuth adapters.
 
 The existing live signup flow remains at `/?app=default` and `/?app=<id>`. It explains the Atmosphere and continues on the selected provider’s website. Configured apps can send users back after signup.
 

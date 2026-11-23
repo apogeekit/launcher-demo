@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import { mountDemo } from './demo'
 import { providers } from './providers'
+import messages from '../locales/en.json'
 
 let root: HTMLElement
 let unmount: () => void
@@ -14,6 +15,7 @@ beforeEach(() => {
 afterEach(() => {
   unmount()
   document.body.replaceChildren()
+  vi.restoreAllMocks()
   vi.useRealTimers()
 })
 function field(name: string) {
@@ -40,6 +42,61 @@ function open() {
 function component(name: 'login' | 'picker') {
   return root.querySelector<HTMLElement>(`[data-component="${name}"]`)!.shadowRoot!
 }
+
+test.each([
+  ['default login preview', () => component('login')],
+  [
+    'inline form',
+    () => {
+      layout('inline')
+      return root
+    },
+  ],
+  ['dialog', open],
+  [
+    'full screen',
+    () => {
+      layout('fullscreen')
+      root.querySelector<HTMLButtonElement>('.demo-app-home button')!.click()
+      return document.querySelector<HTMLDialogElement>('dialog')!
+    },
+  ],
+] as const)('a Bluesky suggestion fills the handle before simulated sign-in in the %s', async (_, preview) => {
+  const search = vi
+    .spyOn(globalThis, 'fetch')
+    .mockImplementation(async () =>
+      Response.json({ actors: [{ handle: 'tester.demo.test', displayName: 'Test account' }] }),
+    )
+  const container = preview()
+  const input = container.querySelector<HTMLInputElement>('[role="combobox"]')!
+  if (container instanceof ShadowRoot) {
+    // Happy DOM matches :focus against the shadow host instead of the focused input.
+    const matches = input.matches.bind(input)
+    vi.spyOn(input, 'matches').mockImplementation(selector =>
+      selector === ':focus' ? container.activeElement === input : matches(selector),
+    )
+  }
+  input.focus()
+  input.value = '@TEST'
+  input.dispatchEvent(new Event('input', { bubbles: true }))
+  await vi.runOnlyPendingTimersAsync()
+
+  expect(search).toHaveBeenCalledOnce()
+  const [url, request] = search.mock.calls[0]!
+  const endpoint = new URL(String(url))
+  expect(endpoint.origin + endpoint.pathname).toBe(
+    'https://public.api.bsky.app/xrpc/app.bsky.actor.searchActorsTypeahead',
+  )
+  expect(endpoint.searchParams.get('q')).toBe('test')
+  expect(request?.credentials).toBe('omit')
+
+  container.querySelector<HTMLElement>('[role="option"]')!.click()
+  expect(input.value).toBe('tester.demo.test')
+  expect(container.querySelector('[data-view="signin"]')).not.toBeNull()
+  submit(container, input.value)
+  await vi.runAllTimersAsync()
+  expect(container.querySelector('[data-view="complete"]')).not.toBeNull()
+})
 
 test('default components load library styles and simulate independently of app settings', async () => {
   expect(component('login').querySelector('style')).not.toBeNull()
@@ -145,6 +202,13 @@ test('sign-in-only and signup-only modes are independent of presentation', () =>
 })
 
 test('Spanish catalogs apply to the component subtree and can be switched back without retaining a flow', () => {
+  const opener = () => root.querySelector('.demo-app-home button')!.textContent
+  expect(opener()).toBe(messages.demo['en.tryLogin'])
+  choose('language', 'es')
+  expect(opener()).toBe(messages.demo['es.tryLogin'])
+  choose('language', 'en')
+  expect(opener()).toBe(messages.demo['en.tryLogin'])
+
   layout('inline')
   const englishLabel = root.querySelector('[data-launcher] label')!.textContent
   choose('language', 'es')
@@ -207,12 +271,18 @@ test('implementation snippets follow presentation, locale, host policy, and OAut
   choose('transport', 'popup')
   expect(code()).toContain("transport: 'popup'")
   expect(code()).toContain('openLoginDialog(flow')
+  expect(code()).toContain("appViewUrl: 'https://public.api.bsky.app'")
   layout('inline')
   choose('language', 'es')
   expect(code()).toContain('mountLogin(container, flow')
   expect(code()).toContain('@apogeekit/launcher-components/locales/es.json')
+  expect(code()).toContain("appViewUrl: 'https://public.api.bsky.app'")
+  choose('mode', 'signup')
+  expect(code()).not.toContain('appViewUrl')
+  choose('mode', 'both')
   layout('picker')
   expect(code()).toContain('selectProviders(')
+  expect(code()).not.toContain('appViewUrl')
   expect(code()).not.toContain('createBrowserOAuthAdapter')
 })
 
