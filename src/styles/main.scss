@@ -1217,6 +1217,70 @@ main.demo-main {
   [data-launcher] form button {
     margin-top: 4px;
   }
+  [data-part='signin-form']:has(> [role='combobox']) {
+    grid-template-columns: minmax(0, 1fr) fit-content(50%);
+    > * {
+      grid-column: 1 / -1;
+    }
+    > [data-part='identifier'] {
+      grid-area: 2 / 1;
+    }
+    > [data-part='submit'] {
+      grid-area: 2 / 2;
+      margin: 0;
+    }
+  }
+  [data-part='handle-suggestions'] {
+    max-block-size: 16rem;
+    margin: 0;
+    padding: 4px;
+    overflow: auto;
+    list-style: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+  }
+  [data-part='handle-suggestion'] {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-block-size: 44px;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    &:is(:hover, [aria-selected='true']) {
+      background: var(--tint);
+    }
+    &[aria-selected='true'] {
+      outline: 2px solid currentColor;
+      outline-offset: -2px;
+    }
+  }
+  [data-part='suggestion-avatar'] {
+    inline-size: 32px;
+    block-size: 32px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--line);
+    img {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+  }
+  [data-part='suggestion-identity'] {
+    display: grid;
+    min-inline-size: 0;
+  }
+  [data-part='suggestion-display-name'] {
+    font-weight: 600;
+  }
+  [data-part='suggestion-handle'] {
+    color: var(--subtle);
+    font-size: 14px;
+  }
   [data-part='sign-in-explanation'] {
     margin-top: 24px;
     border-top: 1px solid var(--line);
@@ -1355,6 +1419,10 @@ main.demo-main {
   border-radius: 12px;
   box-shadow: 0 24px 100px #07132630;
 }
+.demo-page .demo-dialog[data-presentation='inline']:has([role='combobox']) {
+  margin-block: 24px auto;
+  scrollbar-gutter: stable;
+}
 .demo-dialog::backdrop {
   background: #111b3866;
   backdrop-filter: blur(3px);
@@ -1437,6 +1505,7 @@ main.demo-main {
   }
 }
 .demo-dialog[data-presentation='fullscreen'] [data-launcher][data-view='signin'] {
+  align-self: start;
   max-width: 400px;
 }
 .demo-dialog[data-presentation='fullscreen'] [data-part='heading'] {

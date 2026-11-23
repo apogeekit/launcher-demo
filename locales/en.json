@@ -149,6 +149,8 @@
     "liveOnboarding": "Live onboarding ↗",
     "en.yourApp": "Your app",
     "es.yourApp": "Tu app",
+    "en.handleHint": "Handle searches go to Bluesky as you type. You can also enter a full handle or DID.",
+    "es.handleHint": "Enviamos tus búsquedas a Bluesky mientras escribes. También puedes introducir un identificador completo o un DID.",
     "en.opening": "Simulating sign-in…",
     "es.opening": "Simulando el inicio de sesión…",
     "en.complete": "Demo sign-in complete",

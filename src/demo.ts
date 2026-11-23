@@ -24,6 +24,7 @@ export interface DemoResult {
   handle: string
 }
 const DEMO_DELAY_MS = 700
+const BLUESKY_APP_VIEW_URL = 'https://public.api.bsky.app'
 const COMPONENTS_URL = 'https://github.com/apogeekit/launcher-components'
 const REGISTRY_URL = 'https://github.com/apogeekit/pds-registry'
 
@@ -193,17 +194,16 @@ export function mountDemo(root: HTMLElement) {
   }
   const componentLogin = componentPreview('login')
   const componentPicker = componentPreview('picker')
-  const componentMessages = translate()
+  const componentMessages = messages('en')
   let stopComponentLogin: (() => void) | undefined
   function resetComponentLogin() {
     stopComponentLogin?.()
     const controller = createLoginFlow({ providers, auth: createDemoAuth('success') })
     const unmount = mountLogin(componentLogin.container, controller, {
+      appViewUrl: BLUESKY_APP_VIEW_URL,
       headingLevel: 3,
       focusOnMount: false,
       t(key, values) {
-        if (key === 'oauth.opening') return t('demo.en.opening')
-        if (key === 'complete.title') return t('demo.en.complete')
         if (key === 'complete.hint') return t('demo.en.result')
         return componentMessages(key, values)
       },
@@ -398,11 +398,12 @@ export function mountDemo(root: HTMLElement) {
 
   const logoUrl: MountOptions<DemoResult>['logoUrl'] = provider =>
     provider.logo ? `/providers/${provider.logo}` : undefined
-  function messages() {
-    const catalog = translate(language === 'es' ? spanish : undefined)
+  function messages(locale = language) {
+    const catalog = translate(locale === 'es' ? spanish : undefined)
     return (key: string, values?: Record<string, string | number>) => {
-      if (key === 'oauth.opening') return t(`demo.${language}.opening`)
-      if (key === 'complete.title') return t(`demo.${language}.complete`)
+      if (key === 'signin.hint') return t(`demo.${locale}.handleHint`)
+      if (key === 'oauth.opening') return t(`demo.${locale}.opening`)
+      if (key === 'complete.title') return t(`demo.${locale}.complete`)
       return catalog(key, values)
     }
   }
@@ -410,6 +411,7 @@ export function mountDemo(root: HTMLElement) {
     return {
       stylesheet: false,
       appName: t(`demo.${language}.yourApp`),
+      appViewUrl: BLUESKY_APP_VIEW_URL,
       t: messages(),
       logoUrl,
       focusOnMount: false,
@@ -508,6 +510,7 @@ export function mountDemo(root: HTMLElement) {
         ...(layout === 'fullscreen' ? ["  presentation: 'fullscreen',"] : []),
         ...(layout !== 'inline' ? ['  onClose: () => flow.destroy(),'] : []),
         "  appName: 'Your app',",
+        ...(mode !== 'signup' ? [`  appViewUrl: '${BLUESKY_APP_VIEW_URL}',`] : []),
         '  stylesheet: false, // Your app supplies the CSS.',
         ...(language === 'es' ? ['  t: translate(messages),'] : []),
         '  logoUrl: provider => `/providers/${provider.logo}`,',
