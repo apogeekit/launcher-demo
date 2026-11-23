@@ -82,7 +82,8 @@ function select<T extends string>(key: string, values: readonly T[], value: T, c
   const input = element('select')
   input.name = key
   for (const entry of values) {
-    const option = element('option', t(`demo.${key}.${entry}`))
+    const optionKey = `demo.${key}.${entry}`
+    const option = element('option', t(optionKey))
     option.value = entry
     input.append(option)
   }
